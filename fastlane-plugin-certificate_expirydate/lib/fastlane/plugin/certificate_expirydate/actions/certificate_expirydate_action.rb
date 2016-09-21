@@ -6,8 +6,8 @@ module Fastlane
         certificate_pem_file = File.join("/tmp", "#{certificate_basename}.pem")
         File.delete(certificate_pem_file) if File.exist?(certificate_pem_file)
 
-        Fastlane::Action.sh("openssl pkcs12 -in #{params[:certificate_filepath].shellescape} -out #{certificate_pem_file} -nodes -password pass:#{params[:certificate_password].shellescape}")
-        expirydate_string = Fastlane::Actions.sh("cat #{certificate_pem_file} | openssl x509 -noout -enddate")[/notAfter=(.*)/, 1]
+        Actions.sh("openssl pkcs12 -in #{params[:certificate_filepath].shellescape} -out #{certificate_pem_file} -nodes -password pass:#{params[:certificate_password].shellescape}", log: false)
+        expirydate_string = Actions.sh("cat #{certificate_pem_file} | openssl x509 -noout -enddate", log: false)[/notAfter=(.*)/, 1]
 
         DateTime.parse(expirydate_string)
       end
