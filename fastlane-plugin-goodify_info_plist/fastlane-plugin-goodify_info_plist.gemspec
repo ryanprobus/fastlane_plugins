@@ -1,16 +1,16 @@
 # coding: utf-8
 lib = File.expand_path("../lib", __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'fastlane/plugin/certificate_expirydate/version'
+require 'fastlane/plugin/goodify_info_plist/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'fastlane-plugin-certificate_expirydate'
-  spec.version       = Fastlane::CertificateExpirydate::VERSION
+  spec.name          = 'fastlane-plugin-goodify_info_plist'
+  spec.version       = Fastlane::GoodifyInfoPlist::VERSION
   spec.author        = %q{Lyndsey Ferguson}
   spec.email         = %q{lyndsey.ferguson@appian.com}
 
-  spec.summary       = %q{Retrieves the expiry date of the given p12 certificate file}
-  spec.homepage      = "https://github.com/lyndsey-ferguson/fastlane_plugins/"
+  spec.summary       = %q{This plugin will update the plist so that the built application can be deployed and managed within BlackBerry's Good Dynamics Control Center for Enterprise Mobility Management.}
+  spec.homepage      = "https://github.com/lyndsey-ferguson/fastlane_plugins"
   spec.license       = "MIT"
 
   spec.files         = Dir["lib/**/*"] + %w(README.md LICENSE)
@@ -24,5 +24,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rspec'
   spec.add_development_dependency 'rake'
   spec.add_development_dependency 'rubocop'
-  spec.add_development_dependency 'fastlane', '>= 1.103.0'
+  spec.add_development_dependency 'fastlane', '>= 1.95.0'
 end
