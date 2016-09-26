@@ -1,0 +1,48 @@
+module Fastlane
+  module Actions
+    module SharedValues
+      CHECK_GOOD_VERSION_ACTION_VERSION_NUMBER = :CHECK_GOOD_VERSION_ACTION_VERSION_NUMBER
+    end
+    class CheckGoodVersionAction < Action
+      def self.run(params)
+        selected_xcode_dev_dirpath = Actions.sh('xcode-select --print-path', :log => false).strip
+
+        selected_xcode_frameworks_path = File.join(
+          selected_xcode_dev_dirpath,
+          'Platforms',
+          'iPhoneOS.platform',
+          'Developer',
+          'SDKs',
+          'iPhoneOS.sdk',
+          'System',
+          'Library',
+          'Frameworks'
+        )
+
+        good_framework_path = File.join(selected_xcode_frameworks_path, 'GD.framework')
+        unless Dir.exist?(good_framework_path)
+          Actions.lane_context[SharedValues::CHECK_GOOD_VERSION_ACTION_VERSION_NUMBER] = "0"
+          UI.user_error!("The Good framework is not installed")
+          return
+        end
+        good_version_filepath = File.join(good_framework_path, 'version')
+        good_version_filecontents = File.read(good_version_filepath)
+        good_version = /version:\s+([\.0-9]+)/.match(good_version_filecontents)[1]
+
+        Actions.lane_context[SharedValues::CHECK_GOOD_VERSION_ACTION_VERSION_NUMBER] = good_version
+      end
+
+      def self.description
+        "Checks the version of the installed Good framework"
+      end
+
+      def self.authors
+        ["lyndsey-ferguson/ldferguson"]
+      end
+
+      def self.is_supported?(platform)
+        [:ios, :mac].include?(platform)
+      end
+    end
+  end
+end
