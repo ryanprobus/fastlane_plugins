@@ -8,8 +8,6 @@ module Fastlane
 
         gd_entitlement_version = "1.0.0.0"
 
-        puts "GoodifyInfoPlistAction given #{params.to_s}"
-
         if params.values.key?(:good_entitlement_version)
           gd_entitlement_version = params[:good_entitlement_version]
         end
@@ -27,7 +25,7 @@ module Fastlane
           "#{app_id}.sc2.1.0.0.0",
           "com.good.gd.discovery"
         ]
-        if params.values.fetch(:distribution, "appstore").casecmp("enterprise") == 0
+        if params.values.fetch(:export_method, "app-store").casecmp("enterprise") == 0
           url_schemes.push("com.good.gd.discovery.enterprise")
         end
 
@@ -88,11 +86,11 @@ module Fastlane
                                      UI.user_error!("Good ID must be 35 characters or fewer in order to work with Windows Phones") if value.length > 35
                                    end), # the default value if the user didn't provide one
 
-          FastlaneCore::ConfigItem.new(key: :distribution,
-                                    env_name: "FL_GOODIFY_INFO_PLIST_DISTRIBUTION_TARGET",
-                                    description: "The distribution target, \"appstore\" or \"enterprise\", for the GoodifyInfoPlistAction",
+          FastlaneCore::ConfigItem.new(key: :export_method,
+                                    env_name: "FL_GOODIFY_INFO_PLIST_EXPORT_METHOD",
+                                    description: "The export method, \"app-store\" or \"enterprise\", for the GoodifyInfoPlistAction",
                                     verify_block: proc do |value|
-                                      UI.user_error!("Invalid distribution target given for GoodifyInfoPlistAction given, pass using `good_entitlement_id: 'appstore' or 'enterprise'`") if value and value.empty? || !["appstore", "enterprise"].include?(value)
+                                      UI.user_error!("Invalid export method given for GoodifyInfoPlistAction given, pass using `export_method: 'app-store' or 'enterprise'`") if value and value.empty? || !["app-store", "enterprise"].include?(value)
                                     end,
                                     default_value: "enterprise"), # the default value if the user didn't provide one
 
