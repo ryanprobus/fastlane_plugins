@@ -7,7 +7,7 @@ Gem::Specification.new do |spec|
   spec.name          = 'fastlane-plugin-goodify_info_plist'
   spec.version       = Fastlane::GoodifyInfoPlist::VERSION
   spec.author        = %q{Lyndsey Ferguson}
-  spec.email         = %q{lyndsey.ferguson@appian.com}
+  spec.email         = %q{lyndsey.ferguson@gmail.com}
 
   spec.summary       = %q{This plugin will update the plist so that the built application can be deployed and managed within BlackBerry's Good Dynamics Control Center for Enterprise Mobility Management.}
   spec.homepage      = "https://github.com/lyndsey-ferguson/fastlane_plugins"
@@ -25,4 +25,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rake'
   spec.add_development_dependency 'rubocop'
   spec.add_development_dependency 'fastlane', '>= 1.95.0'
+  spec.add_development_dependency 'plist'
 end
