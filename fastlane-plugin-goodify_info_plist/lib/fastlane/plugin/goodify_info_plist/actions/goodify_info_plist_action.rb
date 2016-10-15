@@ -12,7 +12,6 @@ module Fastlane
           gd_entitlement_version = params[:good_entitlement_version]
         end
 
-        puts "about to set the GDApplicationID to \"#{params[:good_entitlement_id]}\""
         plist["GDApplicationID"] = params[:good_entitlement_id]
         plist["GDApplicationVersion"] = gd_entitlement_version
         plist["GDLibraryMode"] = params[:build_simulation_mode] ? "GDEnterpriseSimulation" : "GDEnterprise"
@@ -25,18 +24,22 @@ module Fastlane
           "#{app_id}.sc2.1.0.0.0",
           "com.good.gd.discovery"
         ]
-        if params.values.fetch(:export_method, "app-store").casecmp("enterprise") == 0
+        if params.values.fetch(:export_method, "app-store").casecmp("enterprise").zero?
           url_schemes.push("com.good.gd.discovery.enterprise")
         end
 
         # attempt to replace an existing set of GD url schemes
         replaced = false
-        plist["CFBundleURLTypes"].each do |entry|
-          next unless entry["CFBundleURLSchemes"].include?("com.good.gd.discovery")
-          entry["CFBundleURLName"] = app_id
-          entry["CFBundleURLSchemes"] = url_schemes
-          replaced = true
-          break
+        if plist.key?("CFBundleURLTypes")
+          plist["CFBundleURLTypes"].each do |entry|
+            next unless entry["CFBundleURLSchemes"].include?("com.good.gd.discovery")
+            entry["CFBundleURLName"] = app_id
+            entry["CFBundleURLSchemes"] = url_schemes
+            replaced = true
+            break
+          end
+        else
+          plist["CFBundleURLTypes"] = []
         end
 
         unless replaced
@@ -72,8 +75,8 @@ module Fastlane
                                    description: "The Good app version number for the GoodifyInfoPlistAction",
                                    verify_block: proc do |value|
                                      pattern = Regexp.new('^(:?[1-9]\d{0,2})(:?\.(:?0|[1-9]\d{0,2})){0,3}$')
-                                     did_match = !pattern.match(value).nil?
-                                     UI.user_error!("Invalid Good app version for GoodifyInfoPlistAction given, pass using `good_entitlement_version: '1.2.3.4'`") if value and (value.empty? || !did_match)
+                                     failed_to_match = pattern.match(value).nil?
+                                     UI.user_error!("Invalid Good app version for GoodifyInfoPlistAction given, pass using `good_entitlement_version: '1.2.3.4'`") if failed_to_match
                                    end,
                                    optional: true,
                                    default_value: "1.0.0.0"),
