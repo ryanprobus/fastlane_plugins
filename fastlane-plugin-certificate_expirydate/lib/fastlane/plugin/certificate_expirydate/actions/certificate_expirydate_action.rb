@@ -6,8 +6,10 @@ module Fastlane
         certificate_pem_file = File.join("/tmp", "#{certificate_basename}.pem")
         File.delete(certificate_pem_file) if File.exist?(certificate_pem_file)
 
-        Actions.sh("openssl pkcs12 -in #{params[:certificate_filepath].shellescape} -out #{certificate_pem_file} -nodes -password pass:#{params[:certificate_password].shellescape}", log: false)
-        expirydate_string = Actions.sh("cat #{certificate_pem_file} | openssl x509 -noout -enddate", log: false)[/notAfter=(.*)/, 1]
+        result = sh("openssl pkcs12 -in #{params[:certificate_filepath].shellescape} -out #{certificate_pem_file} -nodes -password pass:#{params[:certificate_password].shellescape}")
+        UI.user_error!("Invalid password provided to get the expiry date of the certificate") if /Mac verify error: invalid password\?/ =~ result
+
+        expirydate_string = sh("cat #{certificate_pem_file} | openssl x509 -noout -enddate")[/notAfter=(.*)/, 1]
 
         DateTime.parse(expirydate_string)
       end
@@ -28,7 +30,7 @@ module Fastlane
                                   optional: false,
                                       type: String,
                               verify_block: proc do |value|
-                                UI.user_error!("Invalid or empty certificate filepath given to CertificateExpirydateAction. Pass using `certificate_filepath: 'path/to/certificate_file'`") if (value.nil? || value.empty?)
+                                UI.user_error!("Invalid or empty certificate filepath given to CertificateExpirydateAction. Pass using `certificate_filepath: 'path/to/certificate_file'`") if value.nil? || value.empty?
                                 UI.user_error!("Non-existant certificate file for CertificateExpirydateAction given") unless File.exist?(value)
                               end),
           FastlaneCore::ConfigItem.new(key: :certificate_password,
