@@ -1,3 +1,6 @@
 lane :test do
-  check_good_version
+  version = check_good_version
+  major_version = /(\d+)\..*/.match(version)[1]
+
+  UI.user_error!("Using an outdated version of the GD.sdk, please upgrade") if major_version < 2
 end
