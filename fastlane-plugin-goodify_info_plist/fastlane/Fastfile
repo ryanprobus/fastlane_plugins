@@ -1,3 +1,8 @@
 lane :test do
-  goodify_info_plist
+  goodify_info_plist(
+    plist: File.absolute_path('ExampleApp/ExampleApp-Info.plist'),
+    good_entitlement_id: 'com.example.app.good',
+    good_entitlement_version: '1.1.0.0',
+    export_method: 'enterprise'
+  )
 end
