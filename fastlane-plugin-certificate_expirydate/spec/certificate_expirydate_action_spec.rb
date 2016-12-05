@@ -2,7 +2,7 @@ require 'fastlane'
 
 describe Fastlane do
   describe Fastlane::FastFile do
-    describe "CheckGoodVersionAction" do
+    describe "CertificateExpirydateAction" do
       context "WHEN calling action with valid parameters" do
         before do
           allow(Fastlane::Actions::CertificateExpirydateAction).to receive(:sh).with(%r{openssl pkcs12 -in .*\/test_certificate.p12 -out .* -nodes -password pass:.*}).and_return('MAC verified OK')
