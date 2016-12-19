@@ -22,7 +22,7 @@ describe Fastlane do
           allow(Fastlane::Actions::CheckGoodVersionAction).to receive(:sh).with(/xcode-select\s*--print-path/, anything).and_return(File.expand_path('./spec/fixtures/xcodes/xcode_without_good'))
         end
 
-        it "THEN the version number is returned" do
+        it "THEN an error is thrown" do
           check_good_version_no_good_sdk = "lane :test do
             check_good_version
           end"
