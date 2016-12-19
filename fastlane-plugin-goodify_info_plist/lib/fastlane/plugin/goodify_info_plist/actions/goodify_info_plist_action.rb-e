@@ -20,17 +20,15 @@ module Fastlane
 
         # create a set of url schemes for GD based on app id
         app_id = plist["CFBundleIdentifier"]
-        url_schemes = []
+        url_schemes = [
+          "#{app_id}.sc2",
+          "#{app_id}.sc2.1.0.0.0",
+          "com.good.gd.discovery"
+        ]
         good_sdk_version = Helper::GoodifyInfoPlistVersionHelper.new(other_action.check_good_version)
         if good_sdk_version.major_version < 3
-          sc_url_schemes = [
-            "#{app_id}.sc",
-            "#{app_id}.sc2",
-            "#{app_id}.sc2.1.0.0.0"
-          ]
-          url_schemes.push(*sc_url_schemes)
+          url_schemes.push("#{app_id}.sc")
         end
-        url_schemes.push("com.good.gd.discovery")
         if params.values.fetch(:export_method, "app-store").casecmp("enterprise").zero?
           url_schemes.push("com.good.gd.discovery.enterprise")
         end

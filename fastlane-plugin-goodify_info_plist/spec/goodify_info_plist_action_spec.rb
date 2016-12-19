@@ -473,9 +473,7 @@ describe Fastlane do
         it 'THEN there are no sc discover scheme\'s' do
           url_types = @plist["CFBundleURLTypes"][0]
           expect(url_types["CFBundleURLSchemes"]).not_to include(
-            "com.example.app.sc",
-            "com.example.app.sc2",
-            "com.example.app.sc2.1.0.0.0"
+            "com.example.app.sc"
           )
         end
       end
