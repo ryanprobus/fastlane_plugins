@@ -5,7 +5,11 @@ module Fastlane
     end
     class CheckGoodVersionAction < Action
       def self.run(params)
-        selected_xcode_dev_dirpath = sh('xcode-select --print-path', log: false).strip
+        selected_xcode_dev_dirpath = sh(
+          'xcode-select --print-path',
+          print_command: false,
+          print_command_output: false
+        ).strip
 
         selected_xcode_frameworks_path = File.join(
           selected_xcode_dev_dirpath,
