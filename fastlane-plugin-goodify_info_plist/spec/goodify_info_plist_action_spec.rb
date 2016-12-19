@@ -6,10 +6,20 @@ require 'plist'
 describe Fastlane do
   describe Fastlane::FastFile do
     describe "GoodifyInfoPlistAction" do
+      before(:all) do
+        @working_dir = Dir.pwd
+        Dir.chdir('./fastlane')
+      end
+
+      after(:all) do
+        Dir.chdir(@working_dir)
+      end
+
       context "WHEN setting the basic required values on a simple Info.plist" do
         before(:each) do
           @temp_plistfile = Tempfile.new(['Info', '.plist'])
-          FileUtils.copy_file("spec/fixtures/plist/SimpleInfo.plist", @temp_plistfile.path)
+          FileUtils.copy_file("../spec/fixtures/plist/SimpleInfo.plist", @temp_plistfile.path)
+          allow(Fastlane::Actions::CheckGoodVersionAction).to receive(:run).and_return('2.4.0.5018')
 
           Fastlane::FastFile.new.parse("lane :test do
             goodify_info_plist ({
@@ -55,8 +65,9 @@ describe Fastlane do
       context "WHEN setting the export method to app-store on a simple Info.plist" do
         before(:each) do
           @temp_plistfile = Tempfile.new(['Info', '.plist'])
-          FileUtils.copy_file("spec/fixtures/plist/SimpleInfo.plist", @temp_plistfile.path)
+          FileUtils.copy_file("../spec/fixtures/plist/SimpleInfo.plist", @temp_plistfile.path)
 
+          allow(Fastlane::Actions::CheckGoodVersionAction).to receive(:run).and_return('2.4.0.5018')
           Fastlane::FastFile.new.parse("lane :test do
             goodify_info_plist ({
               plist: '#{@temp_plistfile.path}',
@@ -92,8 +103,9 @@ describe Fastlane do
       context "WHEN setting the export method to app-store on a Existing Info.plist" do
         before(:each) do
           @temp_plistfile = Tempfile.new(['ExistingInfo', '.plist'])
-          FileUtils.copy_file("spec/fixtures/plist/ExistingInfo.plist", @temp_plistfile.path)
+          FileUtils.copy_file("../spec/fixtures/plist/ExistingInfo.plist", @temp_plistfile.path)
 
+          allow(Fastlane::Actions::CheckGoodVersionAction).to receive(:run).and_return('2.4.0.5018')
           Fastlane::FastFile.new.parse("lane :test do
             goodify_info_plist ({
               plist: '#{@temp_plistfile.path}',
@@ -130,8 +142,9 @@ describe Fastlane do
       context "WHEN setting the optional Good Version Number on a Simple Info.plist" do
         before(:each) do
           @temp_plistfile = Tempfile.new(['Info', '.plist'])
-          FileUtils.copy_file("spec/fixtures/plist/SimpleInfo.plist", @temp_plistfile.path)
+          FileUtils.copy_file("../spec/fixtures/plist/SimpleInfo.plist", @temp_plistfile.path)
 
+          allow(Fastlane::Actions::CheckGoodVersionAction).to receive(:run).and_return('2.4.0.5018')
           Fastlane::FastFile.new.parse("lane :test do
             goodify_info_plist ({
               plist: '#{@temp_plistfile.path}',
@@ -155,8 +168,9 @@ describe Fastlane do
       context "WHEN setting the build_simulation_mode on the Simple Info.plist" do
         before(:each) do
           @temp_plistfile = Tempfile.new(['Info', '.plist'])
-          FileUtils.copy_file("spec/fixtures/plist/SimpleInfo.plist", @temp_plistfile.path)
+          FileUtils.copy_file("../spec/fixtures/plist/SimpleInfo.plist", @temp_plistfile.path)
 
+          allow(Fastlane::Actions::CheckGoodVersionAction).to receive(:run).and_return('2.4.0.5018')
           Fastlane::FastFile.new.parse("lane :test do
             goodify_info_plist ({
               plist: '#{@temp_plistfile.path}',
@@ -185,6 +199,8 @@ describe Fastlane do
             })
           end"
 
+          allow(Fastlane::Actions::CheckGoodVersionAction).to receive(:run).and_return('2.4.0.5018')
+
           expect { Fastlane::FastFile.new.parse(goodify_info_plist_no_plist).runner.execute(:test) }.to(
             raise_error(FastlaneCore::Interface::FastlaneError) do |error|
               expect(error.message).to match(/Invalid plist file path for GoodifyInfoPlistAction given/)
@@ -195,10 +211,12 @@ describe Fastlane do
         it "THEN it fails appropriately when an invalid plist file provided" do
           goodify_info_plist_invalid_plist = "lane :test do
             goodify_info_plist ({
-              plist: 'spec/fixtures/plist/NoInfo.plist',
+              plist: '../spec/fixtures/plist/NoInfo.plist',
               good_entitlement_id: 'com.example.app.good'
             })
           end"
+
+          allow(Fastlane::Actions::CheckGoodVersionAction).to receive(:run).and_return('2.4.0.5018')
 
           expect { Fastlane::FastFile.new.parse(goodify_info_plist_invalid_plist).runner.execute(:test) }.to(
             raise_error(FastlaneCore::Interface::FastlaneError) do |error|
@@ -211,7 +229,9 @@ describe Fastlane do
       context "WHEN providing a missing or invalid Good App Id" do
         before(:each) do
           @temp_plistfile = Tempfile.new(['Info', '.plist'])
-          FileUtils.copy_file("spec/fixtures/plist/SimpleInfo.plist", @temp_plistfile.path)
+          FileUtils.copy_file("../spec/fixtures/plist/SimpleInfo.plist", @temp_plistfile.path)
+
+          allow(Fastlane::Actions::CheckGoodVersionAction).to receive(:run).and_return('2.4.0.5018')
         end
 
         after(:each) do
@@ -233,6 +253,8 @@ describe Fastlane do
         end
 
         it "THEN it fails appropriately when an empty Good App Id provided" do
+          allow(Fastlane::Actions::CheckGoodVersionAction).to receive(:run).and_return('2.4.0.5018')
+
           goodify_info_plist_no_good_id = "lane :test do
             goodify_info_plist ({
               plist: '#{@temp_plistfile.path}',
@@ -248,6 +270,8 @@ describe Fastlane do
         end
 
         it "THEN it fails appropriately when a Good App Id > 35 letters is provided" do
+          allow(Fastlane::Actions::CheckGoodVersionAction).to receive(:run).and_return('2.4.0.5018')
+
           goodify_info_plist_invalid_good_id = "lane :test do
             goodify_info_plist ({
               plist: '#{@temp_plistfile.path}',
@@ -266,7 +290,8 @@ describe Fastlane do
       context "WHEN invalid Good Version Numbers" do
         before(:each) do
           @temp_plistfile = Tempfile.new(['Info', '.plist'])
-          FileUtils.copy_file("spec/fixtures/plist/SimpleInfo.plist", @temp_plistfile.path)
+          FileUtils.copy_file("../spec/fixtures/plist/SimpleInfo.plist", @temp_plistfile.path)
+          allow(Fastlane::Actions::CheckGoodVersionAction).to receive(:run).and_return('2.4.0.5018')
         end
 
         after(:each) do
@@ -373,7 +398,7 @@ describe Fastlane do
       context "WHEN invalid export method is given" do
         before(:each) do
           @temp_plistfile = Tempfile.new(['Info', '.plist'])
-          FileUtils.copy_file("spec/fixtures/plist/SimpleInfo.plist", @temp_plistfile.path)
+          FileUtils.copy_file("../spec/fixtures/plist/SimpleInfo.plist", @temp_plistfile.path)
         end
 
         after(:each) do
@@ -401,7 +426,7 @@ describe Fastlane do
       context "WHEN invalid build_simulation_mode is given" do
         before(:each) do
           @temp_plistfile = Tempfile.new(['Info', '.plist'])
-          FileUtils.copy_file("spec/fixtures/plist/SimpleInfo.plist", @temp_plistfile.path)
+          FileUtils.copy_file("../spec/fixtures/plist/SimpleInfo.plist", @temp_plistfile.path)
         end
 
         after(:each) do
@@ -422,6 +447,35 @@ describe Fastlane do
             raise_error(FastlaneCore::Interface::FastlaneError) do |error|
               expect(error.message).to match(/'build_simulation_mode' value must be a TrueClass! Found String instead./)
             end
+          )
+        end
+      end
+
+      context 'WHEN the version of the Good SDK is v3.0.0.6008 or greater' do
+        before(:each) do
+          allow(Fastlane::Actions::CheckGoodVersionAction).to receive(:run).and_return('3.0.0.6009')
+          @temp_plistfile = Tempfile.new(['Info', '.plist'])
+          FileUtils.copy_file("../spec/fixtures/plist/SimpleInfo.plist", @temp_plistfile.path)
+
+          Fastlane::FastFile.new.parse("lane :test do
+            goodify_info_plist ({
+              plist: '#{@temp_plistfile.path}',
+              good_entitlement_id: 'com.example.app.good',
+            })
+          end").runner.execute(:test)
+          @plist = Plist.parse_xml(@temp_plistfile.path)
+        end
+
+        after(:each) do
+          @temp_plistfile.unlink
+        end
+
+        it 'THEN there are no sc discover scheme\'s' do
+          url_types = @plist["CFBundleURLTypes"][0]
+          expect(url_types["CFBundleURLSchemes"]).not_to include(
+            "com.example.app.sc",
+            "com.example.app.sc2",
+            "com.example.app.sc2.1.0.0.0"
           )
         end
       end
