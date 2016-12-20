@@ -25,9 +25,18 @@ module Fastlane
           "#{app_id}.sc2.1.0.0.0",
           "com.good.gd.discovery"
         ]
-        good_sdk_version = Helper::GoodifyInfoPlistVersionHelper.new(other_action.check_good_version)
-        if good_sdk_version.major_version < 3
-          url_schemes.push("#{app_id}.sc")
+        # Currently there is a problem if this plugin action is called in
+        # another action. We are already in the fastlane folder, but other_action
+        # is configured to try and go _back_ into the fastlane folder so
+        # we will get an exception thrown from within other_action -> runner's execute_action
+        fastlane_relpath = '.'
+        fastlane_relpath = '..' if !Dir.exist?('./fastlane') && File.basename(Dir.pwd) == 'fastlane'
+
+        Dir.chdir(fastlane_relpath) do
+          good_sdk_version = Helper::GoodifyInfoPlistVersionHelper.new(other_action.check_good_version)
+          if good_sdk_version.major_version < 3
+            url_schemes.push("#{app_id}.sc")
+          end
         end
         if params.values.fetch(:export_method, "app-store").casecmp("enterprise").zero?
           url_schemes.push("com.good.gd.discovery.enterprise")

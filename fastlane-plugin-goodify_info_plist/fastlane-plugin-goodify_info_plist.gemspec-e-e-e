@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = %q{ldf.public@outlook.com}
 
   spec.summary       = %q{This plugin will update the plist so that the built application can be deployed and managed within BlackBerry's Good Dynamics Control Center for Enterprise Mobility Management.}
-  spec.homepage      = "https://github.com/lyndsey-ferguson/fastlane_plugins"
+  spec.homepage      = "https://github.com/lyndsey-ferguson/fastlane_plugins/tree/master/fastlane-plugin-goodify_info_plist"
   spec.license       = "MIT"
 
   spec.files         = Dir["lib/**/*"] + %w(README.md LICENSE)
