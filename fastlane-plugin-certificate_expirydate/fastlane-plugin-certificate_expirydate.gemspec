@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = %q{ldf.public+github@outlook.com}
 
   spec.summary       = %q{Retrieves the expiry date of the given p12 certificate file}
-  spec.homepage      = "https://github.com/lyndsey-ferguson/fastlane_plugins/"
+  spec.homepage      = "https://github.com/lyndsey-ferguson/fastlane_plugins/tree/master/fastlane-plugin-certificate_expirydate"
   spec.license       = "MIT"
 
   spec.files         = Dir["lib/**/*"] + %w(README.md LICENSE)

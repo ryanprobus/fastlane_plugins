@@ -12,15 +12,15 @@ fastlane add_plugin setup_fragile_tests_for_rescan
 
 ## About setup_fragile_tests_for_rescan
 
-Suppress stabile tests so that 'scan' can run the fragile tests again
-
-**Note to author:** Add a more detailed description about this plugin here. If your plugin contains multiple actions, make sure to mention them here.
+Xcode UI tests are notoriously fragile. This plugin examines the junit
+test report that is produced by the `scan` action to suppress all passing
+tests in preparation to re-scan the tests that failed to determine if they
+were really failing or only failing because of Xcode's unstable test framework.
 
 ## Example
 
 Check out the [example `Fastfile`](fastlane/Fastfile) to see how to use this plugin. Try it by cloning the repo, running `fastlane install_plugins` and `bundle exec fastlane test`.
 
-**Note to author:** Please set up a sample project to make it easy for users to explore what your plugin does. Provide everything that is necessary to try out the plugin in this project (including a sample Xcode/Android project if necessary)
 
 ## Run tests for this plugin
 
