@@ -7,10 +7,10 @@ Gem::Specification.new do |spec|
   spec.name          = 'fastlane-plugin-check_good_version'
   spec.version       = Fastlane::CheckGoodVersion::VERSION
   spec.author        = %q{Lyndsey Ferguson}
-  spec.email         = %q{lyndsey.ferguson@appian.com}
+  spec.email         = %q{lyndsey.ferguson@gmail.com}
 
   spec.summary       = %q{Checks the version of the installed Good framework}
-  spec.homepage      = "https://github.com/lyndsey-ferguson/fastlane_plugins"
+  spec.homepage      = "https://github.com/lyndsey-ferguson/fastlane_plugins/tree/master/fastlane-plugin-check_good_version"
   spec.license       = "MIT"
 
   spec.files         = Dir["lib/**/*"] + %w(README.md LICENSE)
