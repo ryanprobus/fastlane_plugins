@@ -30,7 +30,7 @@ test report that is produced by the `scan` action to suppress all passing
 tests in preparation to re-scan the tests that failed to determine if they
 were really failing or only failing because of Xcode's unstable test framework.
 
-For more information, check out the plugin's [README](setup_fragile_tests_for_rescan/README.md)
+For more information, check out the plugin's [README](fastlane-plugin-setup_fragile_tests_for_rescan/README.md)
 
 ## Issues and Feedback
 
