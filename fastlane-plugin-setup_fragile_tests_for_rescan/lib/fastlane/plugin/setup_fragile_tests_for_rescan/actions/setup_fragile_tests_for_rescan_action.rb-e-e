@@ -41,7 +41,7 @@ module Fastlane
             title: 'setup_fragile_tests_for_rescan suppressed the following tests',
             rows: summary
           )
-          UI.success(table)
+          UI.success("\n#{table}")
         end
         scheme.save!
       end
