@@ -4,6 +4,7 @@ module Fastlane
     class SetupFragileTestsForRescanAction < Action
       require 'nokogiri'
       require 'xcodeproj'
+      require 'terminal-table'
 
       def self.run(params)
         report_file = File.open(params[:report_filepath]) { |f| Nokogiri::XML(f) }
@@ -18,7 +19,8 @@ module Fastlane
         end
 
         scheme = xcscheme(params)
-
+        is_dirty = false
+        summary = []
         report_file.xpath('//testsuites').each do |testsuite|
           buildable_name = testsuite['name'].to_s
 
@@ -29,8 +31,17 @@ module Fastlane
             skipped_test = Xcodeproj::XCScheme::TestAction::TestableReference::SkippedTest.new
             skipped_test.identifier = "#{testcase['classname']}/#{testcase['name']}"
             testable.add_skipped_test(skipped_test)
+            is_dirty = true
+            summary << [skipped_test.identifier]
             testcase.remove
           end
+        end
+        if is_dirty
+          table = Terminal::Table.new(
+            title: 'setup_fragile_tests_for_rescan suppressed the following tests',
+            rows: summary
+          )
+          UI.success(table)
         end
         scheme.save!
       end
