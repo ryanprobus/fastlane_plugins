@@ -112,7 +112,7 @@ describe Fastlane do
           )
         end
 
-        context 'with a valid Xcode project' do
+        context 'with a valid Xcode Objective-C project' do
           before(:each) do
             tmpdir = Dir.mktmpdir
             @tmp_report_filepath = "#{tmpdir}/TestReports/report.xml"
@@ -173,6 +173,50 @@ describe Fastlane do
               raise_error(FastlaneCore::Interface::FastlaneError) do |error|
                 expect(error.message).to match(/Scheme 'NoSuchScheme' does not exist in Xcode project found at '.*'/)
               end
+            )
+          end
+        end
+
+        context 'with a valid Xcode Swift project' do
+          before(:each) do
+            tmpdir = Dir.mktmpdir
+            @tmp_report_filepath = "#{tmpdir}/TestReports/coin_tossing_report.xml"
+            FileUtils.mkdir_p("#{tmpdir}/TestReports")
+            report_filepath = File.expand_path('spec/fixtures/TestReports/coin_tossing_report.xml')
+            FileUtils.copy(report_filepath, @tmp_report_filepath)
+
+            @tmp_xcodeproj_dirpath = "#{tmpdir}/CoinTossing"
+            FileUtils.mkdir_p(@tmp_xcodeproj_dirpath)
+            xcodeproj_dirpath = File.expand_path('spec/fixtures/Projects/CoinTossing/.')
+            FileUtils.cp_r(xcodeproj_dirpath, tmpdir)
+          end
+
+          after(:each) do
+            FileUtils.rm_rf(@tmp_report_filepath)
+            FileUtils.rm_rf(@tmp_xcodeproj_dirpath)
+          end
+
+          it 'suppresses only passing tests found in a test report file in the test suite source file' do
+            fastfile = "lane :test do
+              setup_fragile_tests_for_rescan(
+                project_path: '#{@tmp_xcodeproj_dirpath}/CoinTossing.xcodeproj',
+                scheme: 'CoinTossingUITests',
+                report_filepath: '#{@tmp_report_filepath}'
+              )
+            end"
+
+            Fastlane::FastFile.new.parse(fastfile).runner.execute(:test)
+
+            scheme_filepath = File.join(Xcodeproj::XCScheme.shared_data_dir("#{@tmp_xcodeproj_dirpath}/CoinTossing.xcodeproj"), "CoinTossingUITests.xcscheme")
+            scheme = Xcodeproj::XCScheme.new(scheme_filepath)
+            test_action = scheme.test_action
+            testable = test_action.testables.find { |t| t.buildable_references[0].buildable_name == "CoinTossingUITests.xctest" }
+            actual_skippedtests = testable.skipped_tests.map(&:identifier)
+            expect(actual_skippedtests).to include(
+              "CoinTossingUITests/testResultIsHeads()"
+            )
+            expect(actual_skippedtests).not_to include(
+              "CoinTossingUITests/testResultIsTails()"
             )
           end
         end
