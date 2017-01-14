@@ -28,7 +28,7 @@ module Fastlane
 
           report_file.xpath('//testcase').each do |testcase|
             skipped_test = Xcodeproj::XCScheme::TestAction::TestableReference::SkippedTest.new
-            skipped_test.identifier = "#{testcase['classname']}/#{testcase['name']}"
+            skipped_test.identifier = skipped_test_identifier(testcase['classname'], testcase['name'])
             testable.add_skipped_test(skipped_test)
             is_dirty = true
             summary << [skipped_test.identifier]
@@ -36,13 +36,15 @@ module Fastlane
           end
         end
         if is_dirty
+          scheme.save!
           table = Terminal::Table.new(
             title: 'setup_fragile_tests_for_rescan suppressed the following tests',
             rows: summary
           )
           UI.success("\n#{table}")
+        else
+          UI.error('No passing tests found for suppression')
         end
-        scheme.save!
       end
 
       def self.xcscheme(params)
@@ -56,6 +58,13 @@ module Fastlane
         UI.user_error!("Scheme '#{scheme_name}' does not exist in Xcode project found at '#{project_path}'") unless File.exist?(scheme_filepath)
 
         Xcodeproj::XCScheme.new(scheme_filepath)
+      end
+
+      def self.skipped_test_identifier(testcase_class, testcase_testmethod)
+        is_swift = testcase_class.include?('.')
+        testcase_class.gsub!(/.*\./, '')
+        testcase_testmethod << '()' if is_swift
+        "#{testcase_class}/#{testcase_testmethod}"
       end
 
       def self.description
