@@ -285,6 +285,23 @@ describe Fastlane do
             end
           )
         end
+
+        it "THEN it fails appropriately when a Good App Id with uppercase letters is provided" do
+          allow(Fastlane::Actions::CheckGoodVersionAction).to receive(:run).and_return('2.4.0.5018')
+
+          goodify_info_plist_invalid_good_id = "lane :test do
+            goodify_info_plist ({
+              plist: '#{@temp_plistfile.path}',
+              good_entitlement_id: 'com.example.app.Good'
+            })
+          end"
+
+          expect { Fastlane::FastFile.new.parse(goodify_info_plist_invalid_good_id).runner.execute(:test) }.to(
+            raise_error(FastlaneCore::Interface::FastlaneError) do |error|
+              expect(error.message).to match(/Good ID must have not have any uppercase characters/)
+            end
+          )
+        end
       end
 
       context "WHEN invalid Good Version Numbers" do
