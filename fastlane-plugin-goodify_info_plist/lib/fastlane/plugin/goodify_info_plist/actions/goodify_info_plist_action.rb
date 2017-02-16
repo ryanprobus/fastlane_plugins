@@ -101,6 +101,7 @@ module Fastlane
                                    verify_block: proc do |value|
                                      UI.user_error!("No Good ID for GoodifyInfoPlistAction given, pass using `good_entitlement_id: 'com.example.good'`") if value and value.empty?
                                      UI.user_error!("Good ID must be 35 characters or fewer in order to work with Windows Phones") if value.length > 35
+                                     UI.user_error!("Good ID must have not have any uppercase characters") if value =~ /[A-Z]/
                                    end), # the default value if the user didn't provide one
 
           FastlaneCore::ConfigItem.new(key: :export_method,
