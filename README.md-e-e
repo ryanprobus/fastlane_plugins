@@ -6,6 +6,7 @@ A collection of plugins for the Fastlane automation system. For more information
 
 - [certificate_expirydate](#certificate_expirydate)
 - [check_good_version](#check_good_version)
+- [get_product_bundle_id](#get_product_bundle_id)
 - [goodify_info_plist](#goodify_info_plist)
 - [setup_fragile_tests_for_rescan](#setup_fragile_tests_for_rescan)
 
@@ -16,6 +17,10 @@ Retrieves the expiry date of the given p12 certificate file. For more informatio
 ### check_good_version
 
 Checks the version of the installed Good framework. For more information, check out the plugin's [README](fastlane-plugin-check_good_version/README.md)
+
+### get_product_bundle_id
+
+Gets the PRODUCT_BUNDLE_IDENTIFIER from a target from an Xcode project. For more information, check out the plugin's [README](fastlane-plugin-get_product_bundle_id/README.md)
 
 ### goodify_info_plist
 
