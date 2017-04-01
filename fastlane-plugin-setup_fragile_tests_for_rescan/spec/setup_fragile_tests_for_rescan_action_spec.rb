@@ -1,7 +1,6 @@
 describe Fastlane do
   describe Fastlane::FastFile do
     describe "setup_fragile_tests_for_rescan" do
-      require 'nokogiri'
       require 'xcodeproj'
 
       describe '#run' do
