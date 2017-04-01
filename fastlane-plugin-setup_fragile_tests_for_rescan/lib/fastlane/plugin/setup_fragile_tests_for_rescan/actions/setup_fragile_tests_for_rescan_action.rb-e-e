@@ -1,38 +1,40 @@
 module Fastlane
   module Actions
     class SetupFragileTestsForRescanAction < Action
-      require 'nokogiri'
+      require 'rexml/document'
+      require 'rexml/xpath'
       require 'xcodeproj'
       require 'terminal-table'
 
       def self.run(params)
-        report_file = File.open(params[:report_filepath]) { |f| Nokogiri::XML(f) }
-        UI.user_error!("Malformed XML test report file given") if report_file.errors.length > 0
-        UI.user_error!("Valid XML file is not an Xcode test report") if report_file.xpath('//testsuites').length.zero?
+        report_file = File.open(params[:report_filepath]) { |f| REXML::Document.new(f) }
+        UI.user_error!("Malformed XML test report file given") if report_file.root.nil?
+        UI.user_error!("Valid XML file is not an Xcode test report") if report_file.get_elements('testsuites').empty?
 
         # remove all testcases that failed from the report file
         # so that our subsequent steps here can just focus on finding
         # passing testcases to suppress
-        report_file.xpath('//failure').each do |failure_element|
-          failure_element.parent.remove
+        report_file.elements.each('*/testsuite/testcase/failure') do |failure_element|
+          failure_element.parent.parent.delete_element failure_element.parent
         end
 
         scheme = xcscheme(params)
         is_dirty = false
         summary = []
-        report_file.xpath('//testsuites').each do |testsuite|
-          buildable_name = testsuite['name'].to_s
+        report_file.elements.each('*/testsuite') do |testsuite|
+          buildable_name = File.basename(testsuite.attributes['name'], '.*') << '.xctest'
 
           test_action = scheme.test_action
           testable = test_action.testables.find { |t| t.buildable_references[0].buildable_name == buildable_name }
+          raise "Unable to find testable named #{buildable_name}" if testable.nil?
 
-          report_file.xpath('//testcase').each do |testcase|
+          testsuite.elements.each('testcase') do |testcase|
             skipped_test = Xcodeproj::XCScheme::TestAction::TestableReference::SkippedTest.new
-            skipped_test.identifier = skipped_test_identifier(testcase['classname'], testcase['name'])
+            skipped_test.identifier = skipped_test_identifier(testcase.attributes['classname'], testcase.attributes['name'])
             testable.add_skipped_test(skipped_test)
             is_dirty = true
             summary << [skipped_test.identifier]
-            testcase.remove
+            testsuite.delete_element testcase
           end
         end
         if is_dirty
