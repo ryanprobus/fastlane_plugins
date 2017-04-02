@@ -21,20 +21,19 @@ module Fastlane
         scheme = xcscheme(params)
         is_dirty = false
         summary = []
-        report_file.elements.each('*/testsuite') do |testsuite|
-          buildable_name = File.basename(testsuite.attributes['name'], '.*') << '.xctest'
+        report_file.elements.each('testsuites') do |testsuites|
+          buildable_name = testsuites.attributes['name']
 
           test_action = scheme.test_action
           testable = test_action.testables.find { |t| t.buildable_references[0].buildable_name == buildable_name }
           raise "Unable to find testable named #{buildable_name}" if testable.nil?
 
-          testsuite.elements.each('testcase') do |testcase|
+          testsuites.elements.each('testsuite/testcase') do |testcase|
             skipped_test = Xcodeproj::XCScheme::TestAction::TestableReference::SkippedTest.new
             skipped_test.identifier = skipped_test_identifier(testcase.attributes['classname'], testcase.attributes['name'])
             testable.add_skipped_test(skipped_test)
             is_dirty = true
             summary << [skipped_test.identifier]
-            testsuite.delete_element testcase
           end
         end
         if is_dirty
