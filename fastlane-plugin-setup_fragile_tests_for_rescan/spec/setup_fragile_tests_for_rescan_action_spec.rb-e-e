@@ -139,7 +139,7 @@ describe Fastlane do
               )
             end"
 
-            Fastlane::FastFile.new.parse(fastfile).runner.execute(:test)
+            result = Fastlane::FastFile.new.parse(fastfile).runner.execute(:test)
 
             scheme_filepath = File.join(Xcodeproj::XCScheme.shared_data_dir("#{@tmp_xcodeproj_dirpath}/BlackHoleFoolery.xcodeproj"), "BlackHoleFoolery.xcscheme")
             scheme = Xcodeproj::XCScheme.new(scheme_filepath)
@@ -156,6 +156,18 @@ describe Fastlane do
               "BlackHoleFooleryUITests/testPressingEscapeHatchButtonStretchesAndDestroysPilotWhenInEventHorizon"
             )
             expect(actual_skippedtests).not_to include(
+              "BlackHoleFooleryUITests/testPressingEscapeHatchButtonPunchesPilotToParadiseWhenInBlackHole"
+            )
+            expect(result).to include(
+              "BlackHoleFooleryUITests/testInitialViewContainsElements",
+              "BlackHoleFooleryUITests/testPressingStartButtonBeginsTravellingIntoBlackHole",
+              "BlackHoleFooleryUITests/testPressingStopButtonBeforeEventHorizonStops",
+              "BlackHoleFooleryUITests/testPressingStopButtonBeepsWhenInEventHorizonButDoesNotStop",
+              "BlackHoleFooleryUITests/testPressingStopButtonWhenInBlackHoleInitiatesBigBang",
+              "BlackHoleFooleryUITests/testPressingEscapeHatchButtonEjectsPilotIntoColdBlackSpaceWhenOutsideOfEventHorizon",
+              "BlackHoleFooleryUITests/testPressingEscapeHatchButtonStretchesAndDestroysPilotWhenInEventHorizon"
+            )
+            expect(result).not_to include(
               "BlackHoleFooleryUITests/testPressingEscapeHatchButtonPunchesPilotToParadiseWhenInBlackHole"
             )
           end
@@ -204,7 +216,7 @@ describe Fastlane do
               )
             end"
 
-            Fastlane::FastFile.new.parse(fastfile).runner.execute(:test)
+            result = Fastlane::FastFile.new.parse(fastfile).runner.execute(:test)
 
             scheme_filepath = File.join(Xcodeproj::XCScheme.shared_data_dir("#{@tmp_xcodeproj_dirpath}/CoinTossing.xcodeproj"), "CoinTossingUITests.xcscheme")
             scheme = Xcodeproj::XCScheme.new(scheme_filepath)
@@ -215,6 +227,12 @@ describe Fastlane do
               "CoinTossingUITests/testResultIsHeads()"
             )
             expect(actual_skippedtests).not_to include(
+              "CoinTossingUITests/testResultIsTails()"
+            )
+            expect(result).to include(
+              "CoinTossingUITests/testResultIsHeads()"
+            )
+            expect(result).not_to include(
               "CoinTossingUITests/testResultIsTails()"
             )
           end

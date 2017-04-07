@@ -46,6 +46,7 @@ module Fastlane
         else
           UI.error('No passing tests found for suppression')
         end
+        summary.flatten
       end
 
       def self.xcscheme(params)
@@ -70,6 +71,10 @@ module Fastlane
 
       def self.description
         "Suppress stabile tests so that 'scan' can run the fragile tests again"
+      end
+
+      def self.return_value
+        "A list of the tests to suppress if you use going to use the :skip_testing option in the scan action"
       end
 
       def self.authors
