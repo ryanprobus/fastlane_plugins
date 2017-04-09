@@ -94,7 +94,7 @@ module Fastlane
       end
 
       def self.return_value
-        "A list of the tests to suppress if you use going to use the :skip_testing option in the scan action"
+        "A hash of the tests with arrays :passed_tests and :failed_tests which can be used with scan's :skip_testing and :test_only options"
       end
 
       def self.authors
