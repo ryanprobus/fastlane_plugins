@@ -20,12 +20,11 @@ module Fastlane
         # so that our subsequent steps here can just focus on finding
         # passing testcases to suppress
         report_file.elements.each('*/testsuite/testcase/failure') do |failure_element|
-          testsuite_element = failure_element.parent.parent
-          buildable_name = File.basename(testsuite_element.parent.attributes['name'], '.*')
-          testcase_element = failure_element.parent
-          failed_test_identifier = xctest_identifier_from_element(testcase_element)
-          result[:failed_tests] << "#{buildable_name}/#{failed_test_identifier.chomp('()')}"
-          testsuite_element.delete_element testcase_element
+          testcase = failure_element.parent
+          testsuite_element = testcase.parent
+
+          result[:failed_tests] << xcodebuild_test_identifier(testsuite_element.parent, testcase)
+          testsuite_element.delete_element testcase
         end
 
         scheme = xcscheme(params)
@@ -40,9 +39,9 @@ module Fastlane
 
           testsuites.elements.each('testsuite/testcase') do |testcase|
             skipped_test = Xcodeproj::XCScheme::TestAction::TestableReference::SkippedTest.new
-            skipped_test.identifier = xctest_identifier_from_element(testcase)
+            skipped_test.identifier = xctest_identifier(testcase)
             testable.add_skipped_test(skipped_test)
-            result[:passed_tests] << "#{File.basename(buildable_name, '.*')}/#{skipped_test.identifier.chomp('()')}"
+            result[:passed_tests] << xcodebuild_test_identifier(testsuites, testcase)
             is_dirty = true
             summary << [skipped_test.identifier]
           end
@@ -73,7 +72,7 @@ module Fastlane
         Xcodeproj::XCScheme.new(scheme_filepath)
       end
 
-      def self.xctest_identifier_from_element(testcase)
+      def self.xctest_identifier(testcase)
         testcase_class = testcase.attributes['classname']
         testcase_testmethod = testcase.attributes['name']
 
@@ -81,6 +80,13 @@ module Fastlane
         testcase_class.gsub!(/.*\./, '')
         testcase_testmethod << '()' if is_swift
         "#{testcase_class}/#{testcase_testmethod}"
+      end
+
+      def self.xcodebuild_test_identifier(testsuites, testcase)
+        # remove '.xctest' from the buildable_name
+        buildable_name = File.basename(testsuites.attributes['name'], '.*')
+        test_identifier = xctest_identifier(testcase).chomp('()')
+        "#{buildable_name}/#{test_identifier}"
       end
 
       def self.description
