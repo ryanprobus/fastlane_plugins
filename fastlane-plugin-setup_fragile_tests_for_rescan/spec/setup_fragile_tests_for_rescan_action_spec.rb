@@ -37,7 +37,7 @@ describe Fastlane do
           )
         end
 
-        it 'throws an error when given an test report file path' do
+        it 'throws an error when given an empty test report file path' do
           fastfile = "lane :test do
             setup_fragile_tests_for_rescan(report_filepath: '')
           end"
@@ -50,7 +50,7 @@ describe Fastlane do
 
         it 'throws an error when given a test report file is not an xml file' do
           fastfile = "lane :test do
-            setup_fragile_tests_for_rescan(report_filepath: File.expand_path('spec/fixtures/TestReports/not.xml'))
+            setup_fragile_tests_for_rescan(report_filepath: File.expand_path('../spec/fixtures/TestReports/not.xml'))
           end"
           expect { Fastlane::FastFile.new.parse(fastfile).runner.execute(:test) }.to(
             raise_error(FastlaneCore::Interface::FastlaneError) do |error|
@@ -61,7 +61,7 @@ describe Fastlane do
 
         it 'throws an error when a given test report file is not a Xcode test report file' do
           fastfile = "lane :test do
-            setup_fragile_tests_for_rescan(report_filepath: File.expand_path('spec/fixtures/TestReports/not_test_report.xml'))
+            setup_fragile_tests_for_rescan(report_filepath: File.expand_path('../spec/fixtures/TestReports/not_test_report.xml'))
           end"
           expect { Fastlane::FastFile.new.parse(fastfile).runner.execute(:test) }.to(
             raise_error(FastlaneCore::Interface::FastlaneError) do |error|
@@ -73,8 +73,8 @@ describe Fastlane do
         it 'throws an error when a given project path does not end in .xcodeproj' do
           fastfile = "lane :test do
             setup_fragile_tests_for_rescan(
-              project_path: 'spec/fixtures/projects',
-              report_filepath: File.expand_path('spec/fixtures/TestReports/report.xml')
+              project_path: '../spec/fixtures/projects',
+              report_filepath: File.expand_path('../spec/fixtures/TestReports/report.xml')
             )
           end"
           expect { Fastlane::FastFile.new.parse(fastfile).runner.execute(:test) }.to(
@@ -87,8 +87,8 @@ describe Fastlane do
         it 'throws an error when there is no project.pbxproj file in the project path directory' do
           fastfile = "lane :test do
             setup_fragile_tests_for_rescan(
-              project_path: 'spec/fixtures/projects/InvalidProject/invalid.xcodeproj',
-              report_filepath: File.expand_path('spec/fixtures/TestReports/report.xml')
+              project_path: '../spec/fixtures/projects/InvalidProject/invalid.xcodeproj',
+              report_filepath: File.expand_path('../spec/fixtures/TestReports/report.xml')
             )
           end"
           expect { Fastlane::FastFile.new.parse(fastfile).runner.execute(:test) }.to(
@@ -177,7 +177,7 @@ describe Fastlane do
               setup_fragile_tests_for_rescan(
                 project_path: '#{@tmp_xcodeproj_dirpath}/BlackHoleFoolery.xcodeproj',
                 scheme: 'NoSuchScheme',
-                report_filepath: File.expand_path('spec/fixtures/TestReports/report.xml')
+                report_filepath: File.expand_path('../spec/fixtures/TestReports/report.xml')
               )
             end"
             expect { Fastlane::FastFile.new.parse(fastfile).runner.execute(:test) }.to(
