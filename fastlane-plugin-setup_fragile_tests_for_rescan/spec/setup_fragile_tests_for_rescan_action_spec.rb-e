@@ -158,18 +158,18 @@ describe Fastlane do
             expect(actual_skippedtests).not_to include(
               "BlackHoleFooleryUITests/testPressingEscapeHatchButtonPunchesPilotToParadiseWhenInBlackHole"
             )
-            expect(result).to include(
-              "BlackHoleFooleryUITests/testInitialViewContainsElements",
-              "BlackHoleFooleryUITests/testPressingStartButtonBeginsTravellingIntoBlackHole",
-              "BlackHoleFooleryUITests/testPressingStopButtonBeforeEventHorizonStops",
-              "BlackHoleFooleryUITests/testPressingStopButtonBeepsWhenInEventHorizonButDoesNotStop",
-              "BlackHoleFooleryUITests/testPressingStopButtonWhenInBlackHoleInitiatesBigBang",
-              "BlackHoleFooleryUITests/testPressingEscapeHatchButtonEjectsPilotIntoColdBlackSpaceWhenOutsideOfEventHorizon",
-              "BlackHoleFooleryUITests/testPressingEscapeHatchButtonStretchesAndDestroysPilotWhenInEventHorizon"
-            )
-            expect(result).not_to include(
-              "BlackHoleFooleryUITests/testPressingEscapeHatchButtonPunchesPilotToParadiseWhenInBlackHole"
-            )
+            expect(result).to have_key(:passed_tests)
+            expect(result[:passed_tests]).to eq([
+              "BlackHoleFooleryUITests/BlackHoleFooleryUITests/testInitialViewContainsElements",
+              "BlackHoleFooleryUITests/BlackHoleFooleryUITests/testPressingStartButtonBeginsTravellingIntoBlackHole",
+              "BlackHoleFooleryUITests/BlackHoleFooleryUITests/testPressingStopButtonBeforeEventHorizonStops",
+              "BlackHoleFooleryUITests/BlackHoleFooleryUITests/testPressingStopButtonBeepsWhenInEventHorizonButDoesNotStop",
+              "BlackHoleFooleryUITests/BlackHoleFooleryUITests/testPressingStopButtonWhenInBlackHoleInitiatesBigBang",
+              "BlackHoleFooleryUITests/BlackHoleFooleryUITests/testPressingEscapeHatchButtonEjectsPilotIntoColdBlackSpaceWhenOutsideOfEventHorizon",
+              "BlackHoleFooleryUITests/BlackHoleFooleryUITests/testPressingEscapeHatchButtonStretchesAndDestroysPilotWhenInEventHorizon"
+            ])
+            expect(result).to have_key(:failed_tests)
+            expect(result[:failed_tests]).to eq(['BlackHoleFooleryUITests/BlackHoleFooleryUITests/testPressingEscapeHatchButtonPunchesPilotToParadiseWhenInBlackHole'])
           end
 
           it 'throws an error when the given scheme does not exist in the project' do
@@ -229,12 +229,10 @@ describe Fastlane do
             expect(actual_skippedtests).not_to include(
               "CoinTossingUITests/testResultIsTails()"
             )
-            expect(result).to include(
-              "CoinTossingUITests/testResultIsHeads()"
-            )
-            expect(result).not_to include(
-              "CoinTossingUITests/testResultIsTails()"
-            )
+            expect(result).to have_key(:passed_tests)
+            expect(result[:passed_tests]).to eq(['CoinTossingUITests/CoinTossingUITests/testResultIsHeads'])
+            expect(result).to have_key(:failed_tests)
+            expect(result[:failed_tests]).to eq(['CoinTossingUITests/CoinTossingUITests/testResultIsTails'])
           end
         end
       end

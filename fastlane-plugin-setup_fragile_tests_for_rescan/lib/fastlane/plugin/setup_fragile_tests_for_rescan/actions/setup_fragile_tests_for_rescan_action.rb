@@ -11,11 +11,21 @@ module Fastlane
         UI.user_error!("Malformed XML test report file given") if report_file.root.nil?
         UI.user_error!("Valid XML file is not an Xcode test report") if report_file.get_elements('testsuites').empty?
 
+        result = {
+          passed_tests: [],
+          failed_tests: []
+        }
+
         # remove all testcases that failed from the report file
         # so that our subsequent steps here can just focus on finding
         # passing testcases to suppress
         report_file.elements.each('*/testsuite/testcase/failure') do |failure_element|
-          failure_element.parent.parent.delete_element failure_element.parent
+          testsuite_element = failure_element.parent.parent
+          buildable_name = File.basename(testsuite_element.parent.attributes['name'], '.*')
+          testcase_element = failure_element.parent
+          failed_test_identifier = test_identifier(testcase_element.attributes['classname'], testcase_element.attributes['name'])
+          result[:failed_tests] << "#{buildable_name}/#{failed_test_identifier.chomp('()')}"
+          testsuite_element.delete_element testcase_element
         end
 
         scheme = xcscheme(params)
@@ -30,8 +40,9 @@ module Fastlane
 
           testsuites.elements.each('testsuite/testcase') do |testcase|
             skipped_test = Xcodeproj::XCScheme::TestAction::TestableReference::SkippedTest.new
-            skipped_test.identifier = skipped_test_identifier(testcase.attributes['classname'], testcase.attributes['name'])
+            skipped_test.identifier = test_identifier(testcase.attributes['classname'], testcase.attributes['name'])
             testable.add_skipped_test(skipped_test)
+            result[:passed_tests] << "#{File.basename(buildable_name, '.*')}/#{skipped_test.identifier.chomp('()')}"
             is_dirty = true
             summary << [skipped_test.identifier]
           end
@@ -46,7 +57,7 @@ module Fastlane
         else
           UI.error('No passing tests found for suppression')
         end
-        summary.flatten
+        result
       end
 
       def self.xcscheme(params)
@@ -62,7 +73,7 @@ module Fastlane
         Xcodeproj::XCScheme.new(scheme_filepath)
       end
 
-      def self.skipped_test_identifier(testcase_class, testcase_testmethod)
+      def self.test_identifier(testcase_class, testcase_testmethod)
         is_swift = testcase_class.include?('.')
         testcase_class.gsub!(/.*\./, '')
         testcase_testmethod << '()' if is_swift
