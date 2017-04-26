@@ -5,6 +5,8 @@ module Fastlane
   module Actions
     class GoodifyInfoPlistAction < Action
       def self.run(params)
+        UI.error("[Deprecation] check_good_version is deprecated, use the update_info_plist_for_blackberry_mam action from the blackberry_mam plugin instead")
+
         # default entitlement version. we rarely, if ever, need to change this
         plist = Plist.parse_xml(params[:plist])
 
