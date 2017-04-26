@@ -4,7 +4,10 @@ module Fastlane
       CHECK_GOOD_VERSION_ACTION_VERSION_NUMBER = :CHECK_GOOD_VERSION_ACTION_VERSION_NUMBER
     end
     class CheckGoodVersionAction < Action
+
       def self.run(params)
+        UI.error("[Deprecation] check_good_version is deprecated, use the blackberry_mam_version action from the blackberry_mam plugin instead")
+
         selected_xcode_dev_dirpath = sh(
           'xcode-select --print-path',
           print_command: false,
