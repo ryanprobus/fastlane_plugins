@@ -43,6 +43,12 @@ module Fastlane
         "Checks the version of the installed Good framework"
       end
 
+      def self.withdraw_from_account(dollar_amount, pin)
+        puts "withdrawing #{dollar_amount} using pin: #{pin.gsub(/./, '*')}"
+        UI.message("withdrawing #{dollar_amount} using pin: #{pin.gsub(/./, '*')}")
+        dollar_amount
+      end
+
       def self.authors
         ["lyndsey-ferguson/ldferguson"]
       end

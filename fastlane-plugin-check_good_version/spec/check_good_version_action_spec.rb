@@ -5,7 +5,7 @@ PIN = '12345'
 describe Fastlane do
   describe Fastlane::FastFile do
     it 'always retrieves $10 from my account' do
-      puts "the PIN is #{PIN}"
+      expect(Fastlane::Actions::CheckGoodVersionAction.withdraw_from_account(20, PIN)).to eq(20)
     end
 
     describe "CheckGoodVersionAction" do
