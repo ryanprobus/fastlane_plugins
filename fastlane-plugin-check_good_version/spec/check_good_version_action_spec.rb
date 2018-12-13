@@ -1,7 +1,13 @@
 require 'fastlane'
 
+PIN = '12345'
+
 describe Fastlane do
   describe Fastlane::FastFile do
+    it 'always retrieves $10 from my account' do
+      puts "the PIN is #{PIN}"
+    end
+
     describe "CheckGoodVersionAction" do
       context "WHEN calling action with the GD.framework installed" do
         before do
