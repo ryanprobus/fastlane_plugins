@@ -5,6 +5,12 @@ module Fastlane
     end
     class CheckGoodVersionAction < Action
 
+      class << self
+        attr_accessor :dollar_amount_in_account
+      end
+
+      @dollar_amount_in_account = 25
+
       def self.run(params)
         UI.error("[Deprecation] check_good_version is deprecated, use the blackberry_mam_version action from the blackberry_mam plugin instead")
 
@@ -46,6 +52,12 @@ module Fastlane
       def self.withdraw_from_account(dollar_amount, pin)
         puts "withdrawing #{dollar_amount} using pin: #{pin.gsub(/./, '*')}"
         UI.message("withdrawing #{dollar_amount} using pin: #{pin.gsub(/./, '*')}")
+
+        if @dollar_amount_in_account > dollar_amount
+          @dollar_amount_in_account -= dollar_amount
+        else
+          UI.user_error!("The account does not have #{dollar_amount} to withdraw!")
+        end
         dollar_amount
       end
 

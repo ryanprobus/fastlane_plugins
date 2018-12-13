@@ -4,8 +4,22 @@ PIN = '12345'
 
 describe Fastlane do
   describe Fastlane::FastFile do
-    it 'always retrieves $10 from my account' do
+    before(:each) do
+      Fastlane::Actions::CheckGoodVersionAction.dollar_amount_in_account = 25
+    end
+
+    it 'retrieves $10 from my account when I have the funds' do
+      expect(Fastlane::Actions::CheckGoodVersionAction.withdraw_from_account(10, PIN)).to eq(10)
+    end
+
+    it 'fails to retrieve money I do not have' do
       expect(Fastlane::Actions::CheckGoodVersionAction.withdraw_from_account(20, PIN)).to eq(20)
+
+      expect { Fastlane::Actions::CheckGoodVersionAction.withdraw_from_account(20, PIN) }.to(
+        raise_error(FastlaneCore::Interface::FastlaneError) do |error|
+          expect(error.message).to match(/The account does not have 20 to withdraw!/)
+        end
+      )
     end
 
     describe "CheckGoodVersionAction" do
