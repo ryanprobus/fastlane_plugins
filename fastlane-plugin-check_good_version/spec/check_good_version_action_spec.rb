@@ -22,6 +22,10 @@ describe Fastlane do
       )
     end
 
+    it 'does things' do
+      expect('ryan').not_to be('🤡')
+    end
+
     describe "CheckGoodVersionAction" do
       context "WHEN calling action with the GD.framework installed" do
         before do
